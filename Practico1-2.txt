@@ -1,0 +1,132 @@
+const MAX: usize = 100;
+
+struct Vectores {
+    //Atributos
+    dimension: usize,
+    elemento: [u64;MAX],
+}
+
+impl Vectores {
+    //Constructor
+    fn new() -> Vectores {
+        Vectores {
+            dimension: 0,
+            elemento: [0;MAX],
+        }
+    }
+
+    fn addelement(&mut self, e:u64) {
+        if self.dimension < MAX {
+            self.elemento[self.dimension] = e;
+            self.dimension += 1;
+        }
+    }
+
+    fn show(&self) {
+        for i in 0..self.dimension { //Va hasta el nro - 1
+            println!("Elemento[{}] = {}", i, self.elemento[i]);
+        }
+    }
+
+    // metodo para ordenar de menor a mayor
+    fn ordenar(&mut self) {
+        for i in 0..self.dimension - 1 {
+            for j in (i + 1)..self.dimension {
+                if self.elemento[i] > self.elemento[j] {
+                    let aux = self.elemento[i];
+                    self.elemento[i] = self.elemento[j];
+                    self.elemento[j] = aux;
+                }
+            }
+        }
+    }
+
+    // 1.- Ordenar impares y pares y mostrar al lado izquierdo los impares y a la derecha los pares de forma ordenada ascendentemente
+
+    fn ordenar_impares_pares(&mut self) {
+        self.ordenar();
+
+        let mut aux = [0;MAX];
+        let mut k = 0;
+
+        // metemos los impares primero
+        for i in 0..self.dimension {
+            if self.elemento[i] % 2 != 0 {
+                aux[k] = self.elemento[i];
+                k += 1;
+            }
+        }
+
+        // despues metemos los pares
+        for i in 0..self.dimension {
+            if self.elemento[i] % 2 == 0 {
+                aux[k] = self.elemento[i];
+                k += 1;
+            }
+        }
+
+        // pasamos todo al vector original
+        for i in 0..self.dimension {
+            self.elemento[i] = aux[i];
+        }
+    }
+
+    //2.-Ordenar los números del vector de adentro hacia afuera.
+
+    fn ordenar_adentro_afuera(&mut self) {
+        self.ordenar();
+
+        let mut aux = [0;MAX];
+        let centro = self.dimension / 2;
+
+        // el menor va al medio
+        aux[centro] = self.elemento[0];
+
+        let mut izq = centro;
+        let mut der = centro;
+
+        // repartimos uno a la izq y otro a la der
+        for i in 1..self.dimension {
+            if i % 2 != 0 {
+                izq -= 1;
+                aux[izq] = self.elemento[i];
+            } else {
+                der += 1;
+                aux[der] = self.elemento[i];
+            }
+        }
+
+        // copiamos al vector
+        for i in 0..self.dimension {
+            self.elemento[i] = aux[i];
+        }
+    }
+}
+
+fn main() {
+    // Ejercicio 1
+    let mut v = Vectores::new();
+    v.addelement(5);
+    v.addelement(4);
+    v.addelement(3);
+    v.addelement(2);
+    v.addelement(1);
+
+    println!("Ejercicio 1");
+    v.ordenar_impares_pares();
+    v.show();
+
+    // Ejercicio 2
+    let mut v2 = Vectores::new();
+    v2.addelement(1);
+    v2.addelement(6);
+    v2.addelement(5);
+    v2.addelement(2);
+    v2.addelement(0);
+    v2.addelement(4);
+    v2.addelement(3);
+
+    println!("Ejercicio 2");
+    v2.ordenar_adentro_afuera();
+    v2.show();
+}
